@@ -1,0 +1,115 @@
+#include <iostream>
+#include <cstdio>
+#include "raylib.h"
+
+using namespace std;
+
+int main()
+{
+	//window dimensions
+
+	int width{ 800 };
+	int height{ 450 };
+	InitWindow(width, height, "Richard's Window");
+
+	//circle coordinates
+	int circleX{ 200 };
+	int circleY{ 200 };
+	int circleRadius{ 75 };
+
+	//circle edges
+	int lCircleX{ circleX - circleRadius };
+	int rCircleX{ circleX + circleRadius };
+	int uCircleY{ circleY - circleRadius };
+	int bCircleY{ circleY + circleRadius };
+
+	//rectangle coordinates
+	int rectangleX{ 50 };
+	int rectangleY{ 50 };
+
+	//axe coordinates
+
+	int axeX{ 400 };
+	int axeY{ 0 };
+
+	//axe edges
+
+	int lAxeX{ axeX };
+	int rAxeX{ axeX + rectangleX + rectangleY };
+	int uAxeY{ axeY };
+	int bAxeY{ axeY + rectangleX + rectangleY };
+
+
+	int direction{ 10 };
+
+	bool collisionWithAxe = 
+						(bAxeY >= uCircleY) && 
+						(uAxeY <= bCircleY) && 
+						(lAxeX <= rCircleX) &&
+		                (rAxeX >= lCircleX);
+
+	SetTargetFPS(60);
+
+	while (WindowShouldClose() == false)
+	{
+		BeginDrawing();
+		ClearBackground(WHITE);
+
+		
+
+		// move the axe
+
+		if (collisionWithAxe)
+		{
+			DrawText("Game over!", 400, 200, 20, PINK);
+		}
+		else
+		{
+			// game logic begins
+
+			//update the edges
+
+			lCircleX = circleX - circleRadius;
+			rCircleX = circleX + circleRadius;
+			uCircleY = circleY - circleRadius;
+			bCircleY = circleY + circleRadius;
+			lAxeX = axeX;
+			rAxeX = axeX + rectangleX + rectangleY;
+			uAxeY = axeY;
+			bAxeY =axeY + rectangleX + rectangleY;
+
+			// update collision with axe
+
+			collisionWithAxe =
+				(bAxeY >= uCircleY) &&
+				(uAxeY <= bCircleY) &&
+				(lAxeX <= rCircleX) &&
+				(rAxeX >= lCircleX);
+
+			DrawCircle(circleX, circleY, circleRadius, RED);//Half width, half height, remainder of 400 is radius.
+			DrawRectangle(axeX, axeY, rectangleX, rectangleY, RED);
+
+			//move the axe
+
+			axeY += direction;
+			if (axeY > height || axeY < 0)
+			{
+				direction = -direction;
+			}
+
+			if (IsKeyDown(KEY_D) && circleX < width)
+			{
+				circleX += 10;
+			}
+
+			if (IsKeyDown(KEY_A) && circleX > 0)
+			{
+				circleX -= 10;
+			}
+		}
+		//game logic ends
+		EndDrawing();
+
+	}
+
+}
